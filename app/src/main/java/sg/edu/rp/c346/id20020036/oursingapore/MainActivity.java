@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
@@ -13,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText etTitle, etSingers, etYear;
+    EditText etTitle, etAuthor, etNum;
     Button btnInsert, btnShowList;
     //RadioGroup rg;
     RatingBar rb;
@@ -24,9 +23,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         etTitle = (EditText) findViewById(R.id.etTitle);
-        etSingers = (EditText) findViewById(R.id.etSingers);
-        etYear = (EditText) findViewById(R.id.etYear);
-        btnInsert = (Button) findViewById(R.id.btnInsertSong);
+        etAuthor = (EditText) findViewById(R.id.etAuthor);
+        etNum = (EditText) findViewById(R.id.etNum);
+        btnInsert = (Button) findViewById(R.id.btnInsertBook);
         btnShowList = (Button) findViewById(R.id.btnShowList);
         //rg = (RadioGroup) findViewById(R.id.rgStars);
         rb = findViewById(R.id.ratingBar2);
@@ -36,17 +35,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 String title = etTitle.getText().toString().trim();
-                String singers = etSingers.getText().toString().trim();
-                if (title.length() == 0 || singers.length() == 0){
+                String author = etAuthor.getText().toString().trim();
+                if (title.length() == 0 || author.length() == 0){
                     Toast.makeText(MainActivity.this, "Incomplete data", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
 
-                String year_str = etYear.getText().toString().trim();
-                int year = 0;
+                String year_str = etNum.getText().toString().trim();
+                int num = 0;
                 try {
-                    year = Integer.valueOf(year_str);
+                    num = Integer.valueOf(year_str);
                 } catch (Exception e){
                     Toast.makeText(MainActivity.this, "Invalid year", Toast.LENGTH_SHORT).show();
                     return;
@@ -56,13 +55,13 @@ public class MainActivity extends AppCompatActivity {
                 String star = String.valueOf(getStars());
                 String s = String.valueOf(star.charAt(0));
                 int stars = Integer.parseInt(s);
-                dbh.insertSong(title, singers, year, stars);
+                dbh.insertBook(title, author, num, stars);
                 dbh.close();
                 Toast.makeText(MainActivity.this, "Inserted", Toast.LENGTH_LONG).show();
 
                 etTitle.setText("");
-                etSingers.setText("");
-                etYear.setText("");
+                etAuthor.setText("");
+                etNum.setText("");
 
             }
         });

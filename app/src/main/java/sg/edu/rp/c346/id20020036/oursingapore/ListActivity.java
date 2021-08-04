@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class ListActivity extends AppCompatActivity {
 
     ListView lv;
-    ArrayList<Song> songList;
+    ArrayList<Books> songList;
     //ArrayAdapter<Song> adapter;
     CustomAdapter aa;
     Button btn5Stars;
@@ -31,11 +31,11 @@ public class ListActivity extends AppCompatActivity {
         super.onResume();
         DBHelper dbh = new DBHelper(this);
         songList.clear();
-        songList.addAll(dbh.getAllSongs());
+        songList.addAll(dbh.getAllBooks());
         aa.notifyDataSetChanged();
 
         years.clear();
-        years.addAll(dbh.getYears());
+        years.addAll(dbh.getNum());
         spinnerAdapter.notifyDataSetChanged();
     }
 
@@ -49,8 +49,8 @@ public class ListActivity extends AppCompatActivity {
         spinner = (Spinner) this.findViewById(R.id.spinnerYear);
 
         DBHelper dbh = new DBHelper(this);
-        songList = dbh.getAllSongs();
-        years = dbh.getYears();
+        songList = dbh.getAllBooks();
+        years = dbh.getNum();
         dbh.close();
 
         aa = new CustomAdapter(this, R.layout.row, songList);
@@ -60,7 +60,7 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(ListActivity.this, EditListActivity.class);
-                i.putExtra("song", songList.get(position));
+                i.putExtra("book", songList.get(position));
                 startActivity(i);
             }
         });
@@ -70,7 +70,7 @@ public class ListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 DBHelper dbh = new DBHelper(ListActivity.this);
                 songList.clear();
-                songList.addAll(dbh.getAllSongsByStars(5));
+                songList.addAll(dbh.getAllBooksByStars(5));
                 aa.notifyDataSetChanged();
             }
         });
@@ -83,7 +83,7 @@ public class ListActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 DBHelper dbh = new DBHelper(ListActivity.this);
                 songList.clear();
-                songList.addAll(dbh.getAllSongsByYear(Integer.valueOf(years.get(position))));
+                songList.addAll(dbh.getAllBooksByNum(Integer.valueOf(years.get(position))));
                 aa.notifyDataSetChanged();
             }
 

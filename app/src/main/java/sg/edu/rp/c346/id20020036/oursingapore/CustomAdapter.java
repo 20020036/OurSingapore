@@ -14,9 +14,9 @@ import java.util.ArrayList;
 public class CustomAdapter extends ArrayAdapter {
     Context parent_context;
     int layout_id;
-    ArrayList<Song> versionList;
+    ArrayList<Books> versionList;
 
-    public CustomAdapter(Context context, int resource, ArrayList<Song> objects) {
+    public CustomAdapter(Context context, int resource, ArrayList<Books> objects) {
         super(context, resource, objects);
 
         parent_context = context;
@@ -32,23 +32,23 @@ public class CustomAdapter extends ArrayAdapter {
         View rowView = inflater.inflate(layout_id, parent, false);
 
         TextView tvTitle = rowView.findViewById(R.id.tvTitle);
-        TextView tvYear = rowView.findViewById(R.id.tvYear);
+        TextView tvNum = rowView.findViewById(R.id.tvNum);
 
-        TextView tvSinger = rowView.findViewById(R.id.tvSinger);
+        TextView tvAuthor = rowView.findViewById(R.id.tvAuthor);
         RatingBar rb = rowView.findViewById(R.id.ratingBar);
         ImageView iv = rowView.findViewById(R.id.iv);
 
-        Song currentVersion = versionList.get(position);
+        Books currentVersion = versionList.get(position);
 
-        int year = Integer.parseInt(currentVersion.getYearReleased());
+        int year = Integer.parseInt(currentVersion.getNum());
         tvTitle.setText(currentVersion.getTitle());
-        tvYear.setText(currentVersion.getYearReleased());
+        tvNum.setText(currentVersion.getNum());
         if(year < 2019)
         {
             iv.setVisibility(View.INVISIBLE);
         }
 
-        tvSinger.setText(currentVersion.getSingers());
+        tvAuthor.setText(currentVersion.getAuthor());
         rb.setRating(currentVersion.getStars());
 
         return rowView;

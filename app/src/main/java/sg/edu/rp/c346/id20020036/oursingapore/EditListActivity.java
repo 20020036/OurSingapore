@@ -1,5 +1,7 @@
 package sg.edu.rp.c346.id20020036.oursingapore;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class EditListActivity extends AppCompatActivity {
 
-    EditText etID, etTitle, etSingers, etYear;
+    EditText etID, etTitle, etAuthor, etNum;
     //RadioButton rb1, rb2, rb3, rb4, rb5;
     Button btnCancel, btnUpdate, btnDelete;
     //RadioGroup rg;
@@ -36,18 +38,18 @@ public class EditListActivity extends AppCompatActivity {
         btnUpdate = (Button) findViewById(R.id.buttonUpdate);
         etID = (EditText) findViewById(R.id.etiD);
         etTitle = (EditText) findViewById(R.id.etTitle);
-        etSingers = (EditText) findViewById(R.id.etSingers);
-        etYear = (EditText) findViewById(R.id.etYear);
+        etAuthor = (EditText) findViewById(R.id.etAuthor);
+        etNum = (EditText) findViewById(R.id.etNum);
         rb = findViewById(R.id.rb3);
 
         Intent i = getIntent();
-        final sg.edu.rp.c346.id20020036.ourndpsongs.Song currentSong = (sg.edu.rp.c346.id20020036.ourndpsongs.Song) i.getSerializableExtra("song");
+        final Books currentBook = (Books) i.getSerializableExtra("book");
 
-        etID.setText(currentSong.getId()+"");
-        etTitle.setText(currentSong.getTitle());
-        etSingers.setText(currentSong.getSingers());
-        etYear.setText(currentSong.getYearReleased()+"");
-        /*switch (currentSong.getStars()){
+        etID.setText(currentBook.getId()+"");
+        etTitle.setText(currentBook.getTitle());
+        etAuthor.setText(currentBook.getAuthor());
+        etNum.setText(currentBook.getNum()+"");
+        /*switch (currentBook.getStars()){
             case 5: rb5.setChecked(true);
                 break;
             case 4: rb4.setChecked(true);
@@ -65,30 +67,30 @@ public class EditListActivity extends AppCompatActivity {
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sg.edu.rp.c346.id20020036.ourndpsongs.DBHelper dbh = new sg.edu.rp.c346.id20020036.ourndpsongs.DBHelper(sg.edu.rp.c346.id20020036.ourndpsongs.EditListActivity.this);
-                currentSong.setTitle(etTitle.getText().toString().trim());
-                currentSong.setSingers(etSingers.getText().toString().trim());
-                int year = 0;
+                DBHelper dbh = new DBHelper(EditListActivity.this);
+                currentBook.setTitle(etTitle.getText().toString().trim());
+                currentBook.setAuthor(etAuthor.getText().toString().trim());
+                int num = 0;
                 try {
-                    year = Integer.valueOf(etYear.getText().toString().trim());
+                    num = Integer.valueOf(etNum.getText().toString().trim());
                 } catch (Exception e){
-                    Toast.makeText(sg.edu.rp.c346.id20020036.ourndpsongs.EditListActivity.this, "Invalid year", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditListActivity.this, "Invalid year", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                currentSong.setYearReleased(year);
+                currentBook.setNum(num);
                 String star = String.valueOf(getStars());
                 String s = String.valueOf(star.charAt(0));
                 int stars = Integer.parseInt(s);
-                currentSong.setStars(stars);
+                currentBook.setStars(stars);
                 //int selectedRB = rg.getCheckedRadioButtonId();
                 //RadioButton rb = (RadioButton) findViewById(selectedRB);
-                //currentSong.setStars(Integer.parseInt(rb.getText().toString()));
-                int result = dbh.updateSong(currentSong);
+                //currentBook.setStars(Integer.parseInt(rb.getText().toString()));
+                int result = dbh.updateBook(currentBook);
                 if (result>0){
-                    Toast.makeText(sg.edu.rp.c346.id20020036.ourndpsongs.EditListActivity.this, "Song updated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditListActivity.this, "Song updated", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(sg.edu.rp.c346.id20020036.ourndpsongs.EditListActivity.this, "Update failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditListActivity.this, "Update failed", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -97,21 +99,52 @@ public class EditListActivity extends AppCompatActivity {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sg.edu.rp.c346.id20020036.ourndpsongs.DBHelper dbh = new sg.edu.rp.c346.id20020036.ourndpsongs.DBHelper(sg.edu.rp.c346.id20020036.ourndpsongs.EditListActivity.this);
-                int result = dbh.deleteSong(currentSong.getId());
-                if (result>0){
-                    Toast.makeText(sg.edu.rp.c346.id20020036.ourndpsongs.EditListActivity.this, "Song deleted", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(sg.edu.rp.c346.id20020036.ourndpsongs.EditListActivity.this, "Delete failed", Toast.LENGTH_SHORT).show();
-                }
+                AlertDialog.Builder myBuilder = new AlertDialog.Builder(EditListActivity.this);
+                myBuilder.setTitle("Danger");
+                myBuilder.setMessage("Are you sure you want to delete the book\n" + currentBook.getTitle());
+                myBuilder.setCancelable(true);
+                myBuilder.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DBHelper dbh = new DBHelper(EditListActivity.this);
+                        int result = dbh.deleteBook(currentBook.getId());
+                        if (result > 0) {
+                            Toast.makeText(EditListActivity.this, "Book deleted", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Toast.makeText(EditListActivity.this, "Delete failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                myBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(EditListActivity.this, "Delete failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                AlertDialog myDialog = myBuilder.create();
+                myDialog.show();
             }
         });
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                AlertDialog.Builder myBuilder = new AlertDialog.Builder(EditListActivity.this);
+                myBuilder.setTitle("Danger");
+                myBuilder.setMessage("Are you sure you want to discard the changes?");
+                myBuilder.setCancelable(true);
+                myBuilder.setPositiveButton("DO NOT DISCARD", null);
+                myBuilder.setNegativeButton("DISCARD", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+
+                AlertDialog myDialog = myBuilder.create();
+                myDialog.show();
             }
         });
 
