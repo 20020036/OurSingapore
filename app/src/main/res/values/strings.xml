@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Our Singapore Books</string>
+    <string name="app_name">Books Review</string>
     <string name="title">Book Title</string>
     <string name="hint_title">Enter book title here</string>
     <string name="author">Author</string>
